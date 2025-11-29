@@ -1,29 +1,36 @@
 let engine = null;
 let isReady = false;
+let initPromise = null;
 
 export function initEngine() {
-  return new Promise((resolve) => {
+  if (initPromise) return initPromise;
+
+  initPromise = new Promise((resolve) => {
     if (engine && isReady) {
       resolve(engine);
       return;
     }
 
-    engine = new Worker("/stockfish.js");
+    // FIX: Vite-safe worker loading
+    engine = new Worker(new URL("/stockfish.js", import.meta.url));
 
-    engine.onmessage = (e) => {
+    engine.addEventListener("message", function handler(e) {
       const msg = e.data;
-      console.log("ENGINE Hello this is raghu best move:", msg);
+      console.log("ENGINE:", msg);
 
       if (msg.includes("uciok")) {
-        isReady = true;
         engine.postMessage("isready");
       } else if (msg.includes("readyok")) {
+        isReady = true;
+        engine.removeEventListener("message", handler);
         resolve(engine);
       }
-    };
+    });
 
     engine.postMessage("uci");
   });
+
+  return initPromise;
 }
 
 export function getBestMove(fen, callback) {
@@ -31,20 +38,16 @@ export function getBestMove(fen, callback) {
     engine.postMessage(`position fen ${fen}`);
     engine.postMessage("go depth 12");
 
-    const handler = (e) => {
+    function handler(e) {
       const msg = e.data;
 
       if (msg.includes("bestmove")) {
         const best = msg.split("bestmove ")[1].split(" ")[0];
-
-        // Clean listener
         engine.removeEventListener("message", handler);
-
         callback(best);
       }
-    };
+    }
 
-    // Listen for the result
     engine.addEventListener("message", handler);
   });
 }

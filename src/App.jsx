@@ -1,13 +1,22 @@
-import React from "react";
-import Checkmates from "./Checkmates";
-import StockfishTest from "./StockfishTest";
+import React, { useState } from "react";
+import ChessBoard from "./ChessBoard";
 
 function App() {
+  const [fen, setFen] = useState("start");
+
+  const handleStartPuzzle = () => {
+    const fenInput = prompt("Enter FEN:");
+    if (fenInput) setFen(fenInput);
+  };
+
   return (
-    <div>
-      <h1>Chess Dashboard</h1>
-      <Checkmates />
-      <StockfishTest />
+    <div style={{ padding: 20 }}>
+      <h1>Chess vs Stockfish</h1>
+      <button onClick={handleStartPuzzle} style={{ padding: 10 }}>
+        Load FEN Puzzle
+      </button>
+
+      <ChessBoard initialFen={fen} />
     </div>
   );
 }

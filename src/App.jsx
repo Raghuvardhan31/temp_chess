@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import ChessBoard from "./ChessBoard";
-import StockfishTest from "./stockfishtest";
 
 function App() {
   const [fen, setFen] = useState("start");
@@ -26,7 +25,7 @@ function App() {
       </button>
 
       <ChessBoard initialFen={fen} />
-      <StockfishTest />
+
     </div>
   );
 }

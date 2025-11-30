@@ -132,6 +132,9 @@ export default function ChessBoard({ initialFen }) {
         return;
       }
 
+      // Pause timer during Stockfish's turn
+      setIsTimerRunning(false);
+
       // Stockfish plays opposite color (only if engine is ready)
       if (engineReady) {
         setTimeout(() => stockfishMove(game.current.fen()), 250);

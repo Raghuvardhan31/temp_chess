@@ -23,17 +23,8 @@ function ChessGame() {
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Chess vs Stockfish</h1>
-      <button onClick={handleStartPuzzle} style={{ padding: 10 }}>
-        Load FEN Puzzle
-      </button>
-      <button onClick={handlePlay} style={{ padding: 10, marginLeft: 10 }}>
-        Play
-      </button>
-
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', padding: 20 }}>
       <ChessBoard initialFen={fen} />
-
     </div>
   );
 }

@@ -8,3 +8,5 @@
 - [x] Update src/App.jsx to use Routes and Route for / and /game/:fen
 - [x] Update src/Puzzles.jsx to use useNavigate for navigation
 - [x] Update src/ChessGame.jsx to get fen from URL params
+- [x] Add timer to ChessBoard that runs only when user is playing
+- [x] Improve mobile UI: center board, remove buttons, make responsive

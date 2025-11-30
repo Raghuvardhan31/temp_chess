@@ -10,6 +10,8 @@ export default function ChessBoard({ initialFen }) {
   const [gameStatus, setGameStatus] = useState("");
   const [userColor, setUserColor] = useState('w'); // Assume user is white by default
   const [engineReady, setEngineReady] = useState(false);
+  const [timer, setTimer] = useState(0); // Timer in seconds
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
 
   // Function to update game status
   const updateGameStatus = () => {
@@ -44,51 +46,27 @@ export default function ChessBoard({ initialFen }) {
     setSelected(null);
     setGameStatus("");
     updateGameStatus();
+    setIsTimerRunning(true); // Start timer at the beginning of the game
   }, [initialFen]);
+
+  // Timer effect
+  useEffect(() => {
+    let interval = null;
+    if (isTimerRunning) {
+      interval = setInterval(() => {
+        setTimer((prevTimer) => prevTimer + 1);
+      }, 1000);
+    } else if (!isTimerRunning && timer !== 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [isTimerRunning, timer]);
 
   // Convert UI row/column to chess square
   const squareFromCoords = (r, c) => {
     const file = "abcdefgh"[c];
     const rank = 8 - r;
     return file + rank;
-  };
-
-  // Handle user click
-  const handleSquareClick = (r, c) => {
-    const square = squareFromCoords(r, c);
-
-    if (!selected) {
-      const piece = game.current.get(square);
-      if (piece && piece.color === game.current.turn()) setSelected(square);
-      return;
-    }
-
-    // Try move
-    try {
-      const move = game.current.move({
-        from: selected,
-        to: square,
-        promotion: "q",
-      });
-
-      setSelected(null);
-
-      if (!move) return; // illegal
-
-      setBoard(game.current.board());
-      updateGameStatus();
-
-      // Check if game is over
-      if (game.current.isGameOver()) return;
-
-      // Stockfish plays opposite color (only if engine is ready)
-      if (engineReady) {
-        setTimeout(() => stockfishMove(game.current.fen()), 250);
-      }
-    } catch (error) {
-      console.error("Invalid move:", error);
-      setSelected(null);
-    }
   };
 
   // Engine move
@@ -112,11 +90,56 @@ export default function ChessBoard({ initialFen }) {
         if (move) {
           setBoard(game.current.board());
           updateGameStatus();
+          setIsTimerRunning(true); // Start timer for user's turn after Stockfish moves
         }
       } catch (error) {
         console.error("Stockfish invalid move:", error);
       }
     });
+  };
+
+  // Handle user click
+  const handleSquareClick = (r, c) => {
+    const square = squareFromCoords(r, c);
+
+    if (!selected) {
+      const piece = game.current.get(square);
+      if (piece && piece.color === game.current.turn()) {
+        setSelected(square);
+        setIsTimerRunning(true); // Start timer when user selects a piece
+      }
+      return;
+    }
+
+    // Try move
+    try {
+      const move = game.current.move({
+        from: selected,
+        to: square,
+        promotion: "q",
+      });
+
+      setSelected(null);
+
+      if (!move) return; // illegal
+
+      setBoard(game.current.board());
+      updateGameStatus();
+
+      // Check if game is over
+      if (game.current.isGameOver()) {
+        setIsTimerRunning(false);
+        return;
+      }
+
+      // Stockfish plays opposite color (only if engine is ready)
+      if (engineReady) {
+        setTimeout(() => stockfishMove(game.current.fen()), 250);
+      }
+    } catch (error) {
+      console.error("Invalid move:", error);
+      setSelected(null);
+    }
   };
 
   const getPieceImage = (piece) => {
@@ -125,8 +148,11 @@ export default function ChessBoard({ initialFen }) {
   };
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       {!engineReady && <div style={{ marginBottom: 20, fontSize: 18 }}>Initializing Stockfish...</div>}
+      <div style={{ marginBottom: 20, fontSize: 24, fontWeight: 'bold' }}>
+        Time: {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}
+      </div>
       <div className="board">
         {board.map((row, r) =>
           row.map((piece, c) => (
@@ -143,6 +169,11 @@ export default function ChessBoard({ initialFen }) {
         )}
       </div>
       {gameStatus && <div style={{ marginTop: 20, fontSize: 18, fontWeight: 'bold' }}>{gameStatus}</div>}
+      {game.current.isGameOver() && (
+        <div style={{ marginTop: 20, fontSize: 18, fontWeight: 'bold' }}>
+          Total Time: {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}
+        </div>
+      )}
     </div>
   );
 }

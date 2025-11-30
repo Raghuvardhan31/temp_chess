@@ -158,7 +158,7 @@ export default function ChessBoard({ initialFen }) {
   };
 
   const copyMovesHistory = () => {
-    const historyText = movesHistory.map(entry => `${entry.player}: ${entry.move}`).join('\n');
+    const historyText = `Total User Moves: ${userMoveCount}\n\nMoves History:\n${movesHistory.map(entry => `${entry.player}: ${entry.move} (${entry.fen})`).join('\n')}`;
     navigator.clipboard.writeText(historyText).then(() => {
       alert('Moves history copied to clipboard!');
     }).catch(err => {

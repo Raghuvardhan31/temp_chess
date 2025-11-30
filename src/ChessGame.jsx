@@ -1,25 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "./supabaseClient";
 import ChessBoard from "./ChessBoard";
 
 function ChessGame() {
   const { id: urlId } = useParams();
+  const location = useLocation();
   const [fen, setFen] = useState("start");
   const [currentPuzzle, setCurrentPuzzle] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  // Determine puzzle type from URL path
+  const puzzleType = location.pathname.startsWith("/checkmate") ? "checkmate" : "enprice";
+
   useEffect(() => {
     if (urlId) {
-      fetchPuzzleById(urlId);
+      fetchPuzzleById(urlId, puzzleType);
     }
-  }, [urlId]);
+  }, [urlId, puzzleType]);
 
-  const fetchPuzzleById = async (id) => {
+  const fetchPuzzleById = async (id, type) => {
     setLoading(true);
     const { data, error } = await supabase
-      .from("checkmate")
+      .from(type)
       .select("*")
       .eq("id", parseInt(id))
       .single();
@@ -38,12 +42,12 @@ function ChessGame() {
   const handleNext = () => {
     if (currentPuzzle) {
       const nextId = parseInt(currentPuzzle.id) + 1;
-      navigate(`/game/${nextId}`);
+      navigate(`/${puzzleType}/${nextId}`);
     }
   };
 
   const handleBack = () => {
-    navigate("..", { replace: true });
+    navigate("/", { replace: true });
   };
 
   return (

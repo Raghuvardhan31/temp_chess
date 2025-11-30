@@ -157,6 +157,15 @@ export default function ChessBoard({ initialFen }) {
     return `${import.meta.env.BASE_URL}pieces/${piece.color}${piece.type.toUpperCase()}.png`;
   };
 
+  const copyMovesHistory = () => {
+    const historyText = movesHistory.map(entry => `${entry.player}: ${entry.move}`).join('\n');
+    navigator.clipboard.writeText(historyText).then(() => {
+      alert('Moves history copied to clipboard!');
+    }).catch(err => {
+      console.error('Failed to copy: ', err);
+    });
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       {!engineReady && <div style={{ marginBottom: 20, fontSize: 18 }}>Initializing Stockfish...</div>}
@@ -184,7 +193,8 @@ export default function ChessBoard({ initialFen }) {
           Total Time: {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}
         </div>
       )}
-      <div style={{ marginTop: 20, fontSize: 16 }}>
+      <div className="moves-box">
+        <button onClick={copyMovesHistory} style={{ position: 'absolute', top: 5, right: 5, fontSize: 12 }}>Copy</button>
         <div style={{ fontWeight: 'bold' }}>Total User Moves: {userMoveCount}</div>
         <div style={{ marginTop: 10, fontWeight: 'bold' }}>Moves History:</div>
         <ul style={{ listStyleType: 'none', padding: 0 }}>

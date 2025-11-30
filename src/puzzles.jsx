@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "./supabaseClient";
 
-function Puzzles({ onPlay }) {
+function Puzzles() {
+  const navigate = useNavigate();
   const [checkmates, setCheckmates] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -41,7 +43,7 @@ function Puzzles({ onPlay }) {
           <p><b>Type:</b> {item.type}</p>
           <p><b>Difficulty:</b> {item.difficulty_level}</p>
           <p><b>Solution:</b> {item.solution_moves}</p>
-          <button onClick={() => onPlay(item.fen)}>Play</button>
+          <button onClick={() => navigate(`/game/${encodeURIComponent(item.fen)}`)}>Play</button>
         </div>
       ))}
     </div>

@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import ChessBoard from "./ChessBoard";
 
-function ChessGame({ initialFen }) {
+function ChessGame() {
+  const { fen: urlFen } = useParams();
   const [fen, setFen] = useState("start");
 
   useEffect(() => {
-    if (initialFen) {
-      setFen(initialFen);
+    if (urlFen) {
+      setFen(decodeURIComponent(urlFen));
     }
-  }, [initialFen]);
+  }, [urlFen]);
 
   const handleStartPuzzle = () => {
     const fenInput = prompt("Enter FEN:");

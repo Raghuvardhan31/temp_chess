@@ -1,15 +1,14 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { Routes, Route } from 'react-router-dom'
 import ChessGame from './ChessGame.jsx'
 import Puzzles from './Puzzles.jsx'
-function App() {
-  const [selectedFen, setSelectedFen] = useState(null);
 
+function App() {
   return (
-    <div>
-      <Puzzles onPlay={setSelectedFen}/>
-      <ChessGame initialFen={selectedFen}/>
-      
-    </div>
+    <Routes>
+      <Route path="/" element={<Puzzles />} />
+      <Route path="/game/:fen" element={<ChessGame />} />
+    </Routes>
   )
 }
 

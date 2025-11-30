@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Chess } from "chess.js";
 import { initEngine, getBestMove } from "./stockfishEngine";
-import "./index.css";
+import "./ChessBoard.css";
 
 export default function ChessBoard({ initialFen }) {
   const game = useRef(new Chess());

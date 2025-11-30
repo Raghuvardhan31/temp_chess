@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "./supabaseClient";
 
-function Checkmates() {
+function Puzzles() {
   const [checkmates, setCheckmates] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -41,10 +41,11 @@ function Checkmates() {
           <p><b>Type:</b> {item.type}</p>
           <p><b>Difficulty:</b> {item.difficulty_level}</p>
           <p><b>Solution:</b> {item.solution_moves}</p>
+          
         </div>
       ))}
     </div>
   );
 }
 
-export default Checkmates;
+export default Puzzles;

@@ -4,13 +4,18 @@ import { supabase } from "./supabaseClient";
 import ChessBoard from "./ChessBoard";
 
 function ChessGame() {
-  const { id: urlId } = useParams();
+  
   const location = useLocation();
-  const [fen, setFen] = useState("start");
-  const [currentPuzzle, setCurrentPuzzle] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+
+  const [currentPuzzle, setCurrentPuzzle] = useState(null);
+  const { id: urlId } = useParams();
+  const [fen, setFen] = useState("start");
+  const [difficulty_level, setdifficulty_level] = useState("");
+  const [solution_moves, setSolution_moves] = useState("");
+  const [p_moves, setP_moves] = useState("");
   // Determine puzzle type from URL path
   const puzzleType = location.pathname.split('/')[1];
 
@@ -36,6 +41,9 @@ function ChessGame() {
 
     setCurrentPuzzle(data);
     setFen(data.fen);
+    setdifficulty_level(data.difficulty_level);
+    setSolution_moves(data.solution_moves);
+    setP_moves(data.p_moves);
     setLoading(false);
   };
 
@@ -100,7 +108,7 @@ function ChessGame() {
         Next
       </button>
 
-      <ChessBoard initialFen={fen} />
+      <ChessBoard id={urlId} initialFen={fen} difficulty_level={difficulty_level} solution_moves={solution_moves} p_moves={p_moves} />
     </div>
   );
 }

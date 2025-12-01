@@ -3,7 +3,7 @@ import { Chess } from "chess.js";
 import { initEngine, getBestMove } from "./stockfishEngine";
 import "./ChessBoard.css";
 
-export default function ChessBoard({ initialFen }) {
+export default function ChessBoard({id, initialFen, difficulty_level, solution_moves, p_moves }) {
   const game = useRef(new Chess());
   const [selected, setSelected] = useState(null);
   const [board, setBoard] = useState([]);
@@ -21,9 +21,9 @@ export default function ChessBoard({ initialFen }) {
       const winnerColor = game.current.turn() === 'w' ? 'b' : 'w';
       const winner = winnerColor === userColor ? 'You' : 'Stockfish';
       setGameStatus(`${winner} won by checkmate!`);
-    } else if (game.current.isDraw()) {
-      setGameStatus("Game is a draw!");
-    } else if (game.current.isCheck()) {
+      console.log(id, initialFen, difficulty_level, solution_moves, p_moves );
+      setTimer(0);
+    }  else if (game.current.isCheck()) {
       const inCheckColor = game.current.turn() === 'w' ? 'White' : 'Black';
       setGameStatus(`${inCheckColor} is in check!`);
     } else {

@@ -21,7 +21,7 @@ export default function ChessBoard({id, initialFen, difficulty_level, solution_m
       const winnerColor = game.current.turn() === 'w' ? 'b' : 'w';
       const winner = winnerColor === userColor ? 'You' : 'Stockfish';
       setGameStatus(`${winner} won by checkmate!`);
-      console.log(id, initialFen, difficulty_level, solution_moves, p_moves );
+      console.log(id, initialFen, difficulty_level, solution_moves, p_moves )
       setTimer(0);
     }  else if (game.current.isCheck()) {
       const inCheckColor = game.current.turn() === 'w' ? 'White' : 'Black';

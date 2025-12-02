@@ -52,9 +52,10 @@ export default function ChessBoard({
       boardUser.toLowerCase() === boardSolution.toLowerCase() && !puzzleSolvedRef.current 
     ) {
       setGameStatus("Puzzle solved!");
-      alert("🎉 Congratulations! You solved the puzzle.");
+      
       setPuzzleSolved(true);
       puzzleSolvedRef.current = true;
+      setIsTimerRunning(false);
       setTimer(0);
       setUserMoveCount(0);
       return;

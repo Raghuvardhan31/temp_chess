@@ -33,10 +33,13 @@ export default function ChessBoard({
   const userMoveCountRef = useRef(0);
   const [movesHistory, setMovesHistory] = useState([]);
   const [puzzleSolved, setPuzzleSolved] = useState(false);
+  const puzzleSolvedRef = useRef(false);
 
   // ⭐ Stores user's last-move FEN
   const [currFen, setCurrFen] = useState(initialFen);
-
+  if (userMoveCountRef.current == p_moves && !puzzleSolvedRef.current) (
+          <div style={{ color: "green", fontWeight: "bold" }}> - Boards Match!</div>
+        ) 
   /* -----------------------------------------------------------
      ⭐ Update Game Status — NOW uses board-only FEN comparison
   ------------------------------------------------------------ */
@@ -46,17 +49,16 @@ export default function ChessBoard({
 
     console.log("Comparing Board:", boardUser, "VS", boardSolution);
 
-    // ⭐ Puzzle solved check (board only)
+    // ⭐ Puzzle solved check (board only, case insensitive)
     if (
-      userMoveCountRef.current == p_moves &&
-      boardUser === boardSolution &&
-      !puzzleSolved
+      userMoveCountRef.current == p_moves && !puzzleSolvedRef.current
     ) {
       setGameStatus("Puzzle solved!");
       alert("🎉 Congratulations! You solved the puzzle.");
       setPuzzleSolved(true);
+      puzzleSolvedRef.current = true;
       setTimer(0);
-      return;
+      setUserMoveCount(0);
     }
 
     // Stockfish checkmate detection
@@ -265,7 +267,7 @@ export default function ChessBoard({
           {gameStatus}
         </div>
       )}
-
+       
       {/* Moves History */}
       <div className="moves-box">
         <button
@@ -295,7 +297,9 @@ export default function ChessBoard({
       <div style={{ marginTop: 20, fontSize: 16 }}>
         <b>Current User Board:</b> {extractBoard(currFen)} <br />
         <b>Solution Board:</b> {extractBoard(solution_moves)}
+        
       </div>
+      
     </div>
   );
 }
